@@ -1,10 +1,15 @@
 import logging
+import json
 
 from moxie.core.service import Service
 from moxie.core.kv import kv_store
 
+from moxie_weather.domain import Observation
+
 
 logger = logging.getLogger(__name__)
+
+KEY_OBSERVATION = 'obs'
 
 
 class WeatherService(Service):
@@ -14,15 +19,8 @@ class WeatherService(Service):
 
     def import_observation(self):
         observation = self.provider.import_observation()
+        kv_store.set(KEY_OBSERVATION, json.dumps(observation.as_dict()))
 
     def get_observation(self):
-        return self.provider.import_observation()
-
-
-    def search(self, query, medium):
-        """Search in provider
-        :param query: query
-        :param medium: medium (email, tel)
-        :return: list of domain objects
-        """
-        return self.searcher.search(query, medium)
+        obs = kv_store.get(KEY_OBSERVATION)
+        return Observation.from_dict(json.loads(obs))
