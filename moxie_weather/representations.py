@@ -5,12 +5,15 @@ from moxie.core.representations import HALRepresentation
 
 class HALObservationRepresentation(object):
 
-    def __init__(self, observation, endpoint):
+    def __init__(self, observation, attribution, endpoint):
         self.observation = observation
+        self.attribution = attribution
         self.endpoint = endpoint
 
     def as_dict(self):
-        representation = HALRepresentation(self.observation.as_dict())
+        values = self.observation.as_dict()
+        values['_attribution'] = self.attribution
+        representation = HALRepresentation(values)
         representation.add_link('self', url_for(self.endpoint))
         return representation.as_dict()
 

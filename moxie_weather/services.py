@@ -24,3 +24,8 @@ class WeatherService(Service):
     def get_observation(self):
         obs = kv_store.get(KEY_OBSERVATION)
         return Observation.from_dict(json.loads(obs))
+
+    def get_attribution(self):
+        """Returns a dictionary containing attribution data
+        """
+        return self.provider.ATTRIBUTION
