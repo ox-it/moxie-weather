@@ -38,7 +38,10 @@ class HALWeatherRepresentation(object):
 
     def as_dict(self):
         values = {}
-        values['observation'] = ObservationRepresentation(self.observation).as_dict()
+        if self.observation:
+            values['observation'] = ObservationRepresentation(self.observation).as_dict()
+        else:
+            values['observation'] = None
         values['forecasts'] = [ForecastRepresentation(f).as_dict() for f in self.forecasts]
         values['_attribution'] = self.attribution
         values['last_updated'] = self.last_updated

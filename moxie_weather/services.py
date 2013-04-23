@@ -45,6 +45,8 @@ class WeatherService(Service):
         :return: Observation domain object
         """
         obs = kv_store.get(self._get_key(KEY_OBSERVATION))
+        if not obs:
+            return None
         return Observation.from_dict(json.loads(obs))
 
     def get_forecasts(self):
@@ -52,6 +54,8 @@ class WeatherService(Service):
         :return: list of Forecast domain object
         """
         data = kv_store.get(self._get_key(KEY_FORECASTS))
+        if not data:
+            return []
         forecasts = json.loads(data)
         return [Forecast.from_dict(rs) for rs in forecasts]
 
