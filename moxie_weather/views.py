@@ -14,8 +14,10 @@ class WeatherView(ServiceView):
         self.observation = service.get_observation()
         self.forecasts = service.get_forecasts()
         self.attribution = service.get_attribution()
+        self.last_updated = service.get_last_updated()
         return None
 
     @accepts(HAL_JSON, JSON)
     def as_hal_json(self, result):
-        return HALWeatherRepresentation(self.observation, self.forecasts, self.attribution, request.url_rule.endpoint).as_json()
+        return HALWeatherRepresentation(self.observation, self.forecasts, self.attribution,
+                                        self.last_updated, request.url_rule.endpoint).as_json()

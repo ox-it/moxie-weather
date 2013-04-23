@@ -1,5 +1,6 @@
 import logging
 import json
+from datetime import datetime
 
 from moxie.core.service import Service
 from moxie.core.kv import kv_store
@@ -11,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 KEY_OBSERVATION = 'observation'
 KEY_FORECASTS = 'forecasts'
+KEY_UPDATED = 'last_updated'
 
 
 class WeatherService(Service):
@@ -28,6 +30,7 @@ class WeatherService(Service):
         """
         observation = self.provider.import_observation()
         kv_store.set(self._get_key(KEY_OBSERVATION), json.dumps(observation.as_dict()))
+        self._set_last_updated()
 
     def import_forecasts(self):
         """Import forecasts data from provider
@@ -35,6 +38,7 @@ class WeatherService(Service):
         forecasts = self.provider.import_forecasts()
         data = json.dumps([forecast.as_dict() for forecast in forecasts])
         kv_store.set(self._get_key(KEY_FORECASTS), data)
+        self._set_last_updated()
 
     def get_observation(self):
         """Get observation data from storage
@@ -56,9 +60,19 @@ class WeatherService(Service):
         """
         return self.provider.ATTRIBUTION
 
+    def get_last_updated(self):
+        """Get date of last update
+        """
+        return kv_store.get(self._get_key(KEY_UPDATED))
+
     def _get_key(self, key):
         """Get key used in kv store
         :param key: key to format
         :return: key formatted
         """
         return "{app}_{key}".format(app=self.service_key, key=key)
+
+    def _set_last_updated(self):
+        """Set the last updated date to now
+        """
+        kv_store.set(self._get_key(KEY_UPDATED), datetime.now())
