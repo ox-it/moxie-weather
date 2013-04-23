@@ -3,15 +3,42 @@ from flask import url_for, jsonify
 from moxie.core.representations import HALRepresentation
 
 
-class HALObservationRepresentation(object):
+class ObservationRepresentation(object):
 
-    def __init__(self, observation, attribution, endpoint):
+    def __init__(self, observation):
         self.observation = observation
+
+    def as_dict(self):
+        return self.observation.as_dict()
+
+    def as_json(self):
+        return jsonify(self.as_dict())
+
+
+class ForecastRepresentation(object):
+
+    def __init__(self, forecast):
+        self.forecast = forecast
+
+    def as_dict(self):
+        return self.forecast.as_dict()
+
+    def as_json(self):
+        return jsonify(self.as_dict())
+
+
+class HALWeatherRepresentation(object):
+
+    def __init__(self, observation, forecasts, attribution, endpoint):
+        self.observation = observation
+        self.forecasts = forecasts
         self.attribution = attribution
         self.endpoint = endpoint
 
     def as_dict(self):
-        values = self.observation.as_dict()
+        values = {}
+        values['observation'] = ObservationRepresentation(self.observation).as_dict()
+        values['forecasts'] = [ForecastRepresentation(f).as_dict() for f in self.forecasts]
         values['_attribution'] = self.attribution
         representation = HALRepresentation(values)
         representation.add_link('self', url_for(self.endpoint))

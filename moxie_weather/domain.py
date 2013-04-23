@@ -38,6 +38,8 @@ class Observation(object):
 
 class Forecast(object):
 
+    name = ''
+
     min_temperature = 0
 
     max_temperature = 0
@@ -45,3 +47,19 @@ class Forecast(object):
     outlook = None
 
     observed_date = None
+
+    def as_dict(self):
+        return {'name': self.name,
+                'min_temperature': self.min_temperature,
+                'max_temperature': self.max_temperature,
+                'outlook': self.outlook,
+                'observed_date': self.observed_date}
+
+    @staticmethod
+    def from_dict(values):
+        forecast = Forecast()
+        forecast.name = values['name']
+        forecast.min_temperature = values['min_temperature']
+        forecast.max_temperature = values['max_temperature']
+        forecast.outlook = values['outlook']
+        forecast.observed_date = values['observed_date']
