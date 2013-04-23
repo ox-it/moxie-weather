@@ -75,7 +75,7 @@ class MetOfficeProvider(object):
             outlook = METOFFICE_OUTLOOK[int(f['Day']['W'])]
             forecast.outlook_icon = outlook[0]
             forecast.outlook_description = outlook[1]
-            forecast.observed_date = str(datetime.combine(fc, time(hour=0)))
+            forecast.observed_date = datetime.combine(fc, time(hour=0)).isoformat()
             yield forecast
 
     def import_observation(self):
@@ -89,8 +89,8 @@ class MetOfficeProvider(object):
         observation.wind_speed = int(latest['S'])
         observation.wind_direction = latest['D']
         observation.pressure = int(latest['P'])
-        observation.observed_date = str(datetime.combine(latest_day,
-                    time(int(latest_hour)/60)))
+        observation.observed_date = datetime.combine(latest_day,
+                    time(int(latest_hour)/60)).isoformat()
         outlook = METOFFICE_OUTLOOK[int(latest['W'])]
         observation.outlook_icon = outlook[0]
         observation.outlook_description = outlook[1]

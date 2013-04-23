@@ -75,4 +75,4 @@ class WeatherService(Service):
     def _set_last_updated(self):
         """Set the last updated date to now
         """
-        kv_store.set(self._get_key(KEY_UPDATED), datetime.now())
+        kv_store.set(self._get_key(KEY_UPDATED), datetime.now().isoformat())
