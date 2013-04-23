@@ -20,7 +20,7 @@ class HALWeatherRepresentation(object):
             values['observation'] = None
         values['forecasts'] = [f.as_dict() for f in self.forecasts]
         values['_attribution'] = self.attribution
-        values['last_updated'] = self.last_updated
+        values['_last_updated'] = self.last_updated
         representation = HALRepresentation(values)
         representation.add_link('self', url_for(self.endpoint))
         return representation.as_dict()
