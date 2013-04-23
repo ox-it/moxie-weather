@@ -9,43 +9,42 @@ from moxie_weather.domain import Forecast, Observation
 logger = logging.getLogger(__name__)
 
 
-METOFFICE_OUTLOOK_CHOICES = (
-    ('NA', 'unk'),
-    (0, 'cs'),
-    (1, 's'),
-    (2, 'pc'),     # night
-    (3, 'si'),
-    (4, 'unk'),    # DUST ??
-    (5, 'm'),
-    (6, 'f'),
-    (7, 'gc'),     # Medium-level cloud
-    (8, 'gc'),     # Low-level cloud
-    (9, 'lrs'),    # night
-    (10, 'lrs'),
-    (11, 'd'),
-    (12, 'lr'),
-    (13, 'hr'),   # Heavy rain shower (night)??
-    (14, 'hr'),   # Heavy rain shower (day)??
-    (15, 'hr'),
-    (16, 'hr'),   # Sleet shower (night)??
-    (17, 'hr'),   # Sleet shower (day)??
-    (18, 'hr'),   # Sleet??
-    (19, 'h'),   # Hail shower (night)
-    (20, 'h'),   # Hail shower (day)
-    (21, 'h'),   # Hail
-    (22, 'lsn'),   # Light snow shower (night)
-    (23, 'lsn'),   # Light snow shower (day)
-    (24, 'lsn'),   # Light snow
-    (25, 'hsn'),   # Heavy snow shower (night)
-    (26, 'hsn'),   # Heavy snow shower (day)
-    (27, 'hsn'),   # Heavy snow
-    (28, 'tsh'),   # Thundery shower (night)
-    (29, 'tsh'),   # Thundery shower (day)
-    (30, 'tst'),   # Thunder storm
-    (31, 'tst'),   # Tropical storm
-    (32, 'unk'),   # NOT USED?
-    (33, 'h'),   # Haze
-    )
+# from http://www.metoffice.gov.uk/media/pdf/3/0/DataPoint_API_reference.pdf
+# tuple with icon and description
+METOFFICE_OUTLOOK = {
+    'NA': ('unk', 'Unknown'),
+    0: ('cs', 'Clear night'),
+    1: ('s', 'Sunny day'),
+    2: ('pc', 'Partly cloudy'),     # night
+    3: ('si', 'Partly cloudy'),
+    4: ('unk', 'Unknown'),
+    5: ('m', 'Mist'),
+    6: ('f', 'Fog'),
+    7: ('gc', 'Cloudy'),
+    8: ('gc', 'Overcast'),
+    9: ('lrs', 'Light rain shower'),    # night
+    10: ('lrs', 'Light rain shower'),
+    11: ('d', 'Drizzle'),
+    12: ('lr', 'Light rain'),
+    13: ('hr', 'Heavy rain shower'),    # night
+    14: ('hr', 'Heavy rain shower'),
+    15: ('hr', 'Heavy rain'),
+    16: ('hr', 'Sleet shower'),     # night
+    17: ('hr', 'Sleet shower'),
+    18: ('hr', 'Sleet'),
+    19: ('h', 'Hail shower'),       # night
+    20: ('h', 'Hail shower'),
+    21: ('h', 'Hail'),
+    22: ('lsn', 'Light snow shower'),   # night
+    23: ('lsn', 'Light snow shower'),
+    24: ('lsn', 'Light snow'),
+    25: ('hsn', 'Heavy snow shower'),   # night
+    26: ('hsn', 'Heavy snow shower'),
+    27: ('hsn', 'Heavy snow'),
+    28: ('tsh', 'Thunder shower'),   # night
+    29: ('tsh', 'Thunder shower'),
+    30: ('tst', 'Thunder'),
+}
 
 
 class MetOfficeProvider(object):
@@ -73,8 +72,9 @@ class MetOfficeProvider(object):
             forecast.name = location['name']
             forecast.min_temperature = float(f['Night']['Nm'])
             forecast.max_temperature = float(f['Day']['Dm'])
-            outlooks = dict(METOFFICE_OUTLOOK_CHOICES)
-            forecast.outlook = outlooks[int(f['Day']['W'])]
+            outlook = METOFFICE_OUTLOOK[int(f['Day']['W'])]
+            forecast.outlook_icon = outlook[0]
+            forecast.outlook_description = outlook[1]
             forecast.observed_date = str(datetime.combine(fc, time(hour=0)))
             yield forecast
 
@@ -91,8 +91,9 @@ class MetOfficeProvider(object):
         observation.pressure = int(latest['P'])
         observation.observed_date = str(datetime.combine(latest_day,
                     time(int(latest_hour)/60)))
-        outlooks = dict(METOFFICE_OUTLOOK_CHOICES)
-        observation.outlook = outlooks[int(latest['W'])]
+        outlook = METOFFICE_OUTLOOK[int(latest['W'])]
+        observation.outlook_icon = outlook[0]
+        observation.outlook_description = outlook[1]
         return observation
 
 

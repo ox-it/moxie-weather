@@ -10,7 +10,9 @@ class Observation(object):
 
     pressure = 0
 
-    outlook = None
+    outlook_icon = None
+
+    outlook_description = None
 
     observed_date = None
 
@@ -20,7 +22,8 @@ class Observation(object):
                 'wind_speed': self.wind_speed,
                 'wind_direction': self.wind_direction,
                 'pressure': self.pressure,
-                'outlook': self.outlook,
+                'outlook_icon': self.outlook_icon,
+                'outlook_description': self.outlook_description,
                 'observed_date': self.observed_date}
 
     @staticmethod
@@ -31,7 +34,8 @@ class Observation(object):
         obs.wind_speed = values['wind_speed']
         obs.wind_direction = values['wind_direction']
         obs.pressure = values['pressure']
-        obs.outlook = values['outlook']
+        obs.outlook_icon = values['outlook_icon']
+        obs.outlook_description = values['outlook_description']
         obs.observed_date = values['observed_date']
         return obs
 
@@ -46,13 +50,16 @@ class Forecast(object):
 
     outlook = None
 
-    observed_date = None
+    outlook_icon = None
+
+    outlook_description = None
 
     def as_dict(self):
         return {'name': self.name,
                 'min_temperature': self.min_temperature,
                 'max_temperature': self.max_temperature,
-                'outlook': self.outlook,
+                'outlook_icon': self.outlook_icon,
+                'outlook_description': self.outlook_description,
                 'observed_date': self.observed_date}
 
     @staticmethod
@@ -61,6 +68,7 @@ class Forecast(object):
         forecast.name = values['name']
         forecast.min_temperature = values['min_temperature']
         forecast.max_temperature = values['max_temperature']
-        forecast.outlook = values['outlook']
+        forecast.outlook_icon = values['outlook_icon']
+        forecast.outlook_description = values['outlook_description']
         forecast.observed_date = values['observed_date']
         return forecast
