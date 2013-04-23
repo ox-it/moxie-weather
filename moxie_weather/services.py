@@ -9,30 +9,45 @@ from moxie_weather.domain import Observation, Forecast
 
 logger = logging.getLogger(__name__)
 
-KEY_OBSERVATION = 'obs'
+KEY_OBSERVATION = 'observation'
 KEY_FORECASTS = 'forecasts'
 
 
 class WeatherService(Service):
 
-    def __init__(self, providers=None):
+    def __init__(self, providers=None, service_key='weather'):
+        """Weather service
+        :param providers: list of providers to be used
+        :param service_key: identifier of the service, mainly used when storing data
+        """
         self.provider = self._import_provider(providers.items()[0])
+        self.service_key = service_key
 
     def import_observation(self):
+        """Import observation data from provider
+        """
         observation = self.provider.import_observation()
-        kv_store.set(KEY_OBSERVATION, json.dumps(observation.as_dict()))
+        kv_store.set(self._get_key(KEY_OBSERVATION), json.dumps(observation.as_dict()))
 
     def import_forecasts(self):
+        """Import forecasts data from provider
+        """
         forecasts = self.provider.import_forecasts()
         data = json.dumps([forecast.as_dict() for forecast in forecasts])
-        kv_store.set(KEY_FORECASTS, data)
+        kv_store.set(self._get_key(KEY_FORECASTS), data)
 
     def get_observation(self):
-        obs = kv_store.get(KEY_OBSERVATION)
+        """Get observation data from storage
+        :return: Observation domain object
+        """
+        obs = kv_store.get(self._get_key(KEY_OBSERVATION))
         return Observation.from_dict(json.loads(obs))
 
     def get_forecasts(self):
-        data = kv_store.get(KEY_FORECASTS)
+        """Get forecasts data from storage
+        :return: list of Forecast domain object
+        """
+        data = kv_store.get(self._get_key(KEY_FORECASTS))
         forecasts = json.loads(data)
         return [Forecast.from_dict(rs) for rs in forecasts]
 
@@ -40,3 +55,10 @@ class WeatherService(Service):
         """Returns a dictionary containing attribution data
         """
         return self.provider.ATTRIBUTION
+
+    def _get_key(self, key):
+        """Get key used in kv store
+        :param key: key to format
+        :return: key formatted
+        """
+        return "{app}_{key}".format(app=self.service_key, key=key)
