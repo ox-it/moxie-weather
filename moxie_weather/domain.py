@@ -63,3 +63,4 @@ class Forecast(object):
         forecast.max_temperature = values['max_temperature']
         forecast.outlook = values['outlook']
         forecast.observed_date = values['observed_date']
+        return forecast

@@ -4,17 +4,18 @@ from moxie.core.views import ServiceView, accepts
 from moxie.core.representations import HAL_JSON, JSON
 
 from moxie_weather.services import WeatherService
-from moxie_weather.representations import HALObservationRepresentation
+from moxie_weather.representations import HALWeatherRepresentation
 
 
 class WeatherView(ServiceView):
 
     def handle_request(self):
         service = WeatherService.from_context()
-        data = service.get_observation()
+        self.observation = service.get_observation()
+        self.forecasts = service.get_forecasts()
         self.attribution = service.get_attribution()
-        return data
+        return None
 
     @accepts(HAL_JSON, JSON)
     def as_hal_json(self, result):
-        return HALObservationRepresentation(result, self.attribution, request.url_rule.endpoint).as_json()
+        return HALWeatherRepresentation(self.observation, self.forecasts, self.attribution, request.url_rule.endpoint).as_json()

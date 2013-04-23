@@ -75,7 +75,7 @@ class MetOfficeProvider(object):
             forecast.max_temperature = float(f['Day']['Dm'])
             outlooks = dict(METOFFICE_OUTLOOK_CHOICES)
             forecast.outlook = outlooks[int(f['Day']['W'])]
-            forecast.observed_date = datetime.combine(fc, time(hour=0))
+            forecast.observed_date = str(datetime.combine(fc, time(hour=0)))
             yield forecast
 
     def import_observation(self):

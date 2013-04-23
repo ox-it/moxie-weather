@@ -16,3 +16,11 @@ def import_weather_observation():
     with app.blueprint_context(BLUEPRINT_NAME):
         service = WeatherService.from_context()
         service.import_observation()
+
+
+@celery.task
+def import_weather_forecasts():
+    app = create_app()
+    with app.blueprint_context(BLUEPRINT_NAME):
+        service = WeatherService.from_context()
+        service.import_forecasts()
